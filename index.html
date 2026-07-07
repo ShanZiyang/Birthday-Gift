@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10121f" />
+    <title>胡某生日快乐</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@500;700&family=ZCOOL+KuaiLe&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="fireworks" aria-hidden="true"></canvas>
+
+    <main class="scene">
+      <section class="cover" id="cover" aria-label="生日贺卡封面">
+        <div class="cover__copy">
+          <p class="eyebrow">To Hu</p>
+          <h1>胡某生日快乐</h1>
+          <p class="cover__subtitle">一封迟到不了的生日信，带着烟花、星光和一个奇怪但可爱的火柴人。</p>
+          <button class="open-card" id="openCard" type="button" aria-label="打开生日贺卡">
+            打开贺卡
+          </button>
+        </div>
+        <div class="cover__portrait" aria-hidden="true">
+          <img src="assets/stickman.png" alt="" />
+          <span class="spark spark--one"></span>
+          <span class="spark spark--two"></span>
+          <span class="spark spark--three"></span>
+        </div>
+      </section>
+
+      <section class="card is-hidden" id="card" aria-label="生日祝福正文">
+        <div class="letter">
+          <p class="letter__kicker">Birthday Letter</p>
+          <h2>胡某生日快乐！！！！！</h2>
+          <div class="letter__body" id="letterBody" aria-live="polite"></div>
+          <p class="signature">羊</p>
+        </div>
+        <aside class="memory-panel" aria-label="生日陪伴">
+          <img src="assets/stickman.png" alt="戴着粉色耳机和猫耳的火柴人头像" />
+          <p>爱能抵岁月漫长，<br />无论怎样，我们都在你身边。</p>
+          <button class="replay" id="replay" type="button">再放一次烟花</button>
+        </aside>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
