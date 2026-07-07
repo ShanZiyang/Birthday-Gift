@@ -157,8 +157,14 @@ button:hover {
 .cover__portrait img {
   position: relative;
   width: min(86vw, 460px);
+  height: auto;
   filter: drop-shadow(0 26px 32px rgba(0, 0, 0, 0.42));
   animation: float 4.6s ease-in-out infinite;
+}
+
+.cover__portrait picture {
+  position: relative;
+  display: contents;
 }
 
 .spark {
@@ -253,8 +259,13 @@ button:hover {
 
 .memory-panel img {
   width: min(100%, 230px);
+  height: auto;
   margin-bottom: 22px;
   filter: drop-shadow(0 22px 24px rgba(0, 0, 0, 0.36));
+}
+
+.memory-panel picture {
+  display: contents;
 }
 
 .memory-panel p {
@@ -330,6 +341,7 @@ button:hover {
 
   .memory-panel {
     min-height: 330px;
+    backdrop-filter: none;
   }
 }
 

@@ -7,6 +7,7 @@
     <title>胡某生日快乐</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="image" href="assets/stickman.webp" type="image/webp" />
     <link
       href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@500;700&family=ZCOOL+KuaiLe&display=swap"
       rel="stylesheet"
@@ -27,7 +28,10 @@
           </button>
         </div>
         <div class="cover__portrait" aria-hidden="true">
-          <img src="assets/stickman.png" alt="" />
+          <picture>
+            <source srcset="assets/stickman.webp" type="image/webp" />
+            <img src="assets/stickman.png" alt="" width="720" height="720" decoding="async" fetchpriority="high" />
+          </picture>
           <span class="spark spark--one"></span>
           <span class="spark spark--two"></span>
           <span class="spark spark--three"></span>
@@ -42,13 +46,16 @@
           <p class="signature">羊</p>
         </div>
         <aside class="memory-panel" aria-label="生日陪伴">
-          <img src="assets/stickman.png" alt="戴着粉色耳机和猫耳的火柴人头像" />
+          <picture>
+            <source srcset="assets/stickman.webp" type="image/webp" />
+            <img src="assets/stickman.png" alt="戴着粉色耳机和猫耳的火柴人头像" width="720" height="720" decoding="async" loading="lazy" />
+          </picture>
           <p>爱能抵岁月漫长，<br />无论怎样，我们都在你身边。</p>
           <button class="replay" id="replay" type="button">再放一次烟花</button>
         </aside>
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

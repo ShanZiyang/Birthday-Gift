@@ -1,5 +1,5 @@
 const canvas = document.querySelector("#fireworks");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
 const cover = document.querySelector("#cover");
 const card = document.querySelector("#card");
 const openCard = document.querySelector("#openCard");
@@ -27,12 +27,22 @@ const letterParagraphs = [
 const colors = ["#ff7aa8", "#ffd166", "#74f2ce", "#86b6ff", "#f8f1ff", "#ff9f6e"];
 const rockets = [];
 const particles = [];
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isSmallScreen = window.matchMedia("(max-width: 720px)").matches;
+const maxParticles = isSmallScreen ? 320 : 560;
+const maxRockets = isSmallScreen ? 4 : 7;
+const particleRange = isSmallScreen ? [28, 46] : [38, 64];
+const glowBlur = isSmallScreen ? 7 : 11;
+const launchChance = isSmallScreen ? 0.018 : 0.027;
 let width = 0;
 let height = 0;
 let animationStarted = false;
+let rafId = 0;
+let resizeTimer = 0;
 
 function resizeCanvas() {
-  const ratio = window.devicePixelRatio || 1;
+  const maxRatio = isSmallScreen ? 1.2 : 1.5;
+  const ratio = Math.min(window.devicePixelRatio || 1, maxRatio);
   width = window.innerWidth;
   height = window.innerHeight;
   canvas.width = Math.floor(width * ratio);
@@ -47,6 +57,8 @@ function random(min, max) {
 }
 
 function launchRocket(x = random(width * 0.18, width * 0.82), targetY = random(height * 0.15, height * 0.52)) {
+  if (reduceMotion || rockets.length >= maxRockets) return;
+
   rockets.push({
     x,
     y: height + 20,
@@ -58,7 +70,9 @@ function launchRocket(x = random(width * 0.18, width * 0.82), targetY = random(h
 }
 
 function explode(x, y, color, power = 1) {
-  const count = Math.floor(random(58, 92) * power);
+  const count = Math.min(Math.floor(random(particleRange[0], particleRange[1]) * power), maxParticles - particles.length);
+  if (count <= 0) return;
+
   for (let i = 0; i < count; i += 1) {
     const angle = (Math.PI * 2 * i) / count + random(-0.09, 0.09);
     const speed = random(1.4, 5.2) * power;
@@ -94,12 +108,16 @@ function drawRocket(rocket) {
   ctx.arc(rocket.x, rocket.y, 2.6, 0, Math.PI * 2);
   ctx.fillStyle = rocket.color;
   ctx.shadowColor = rocket.color;
-  ctx.shadowBlur = 18;
+  ctx.shadowBlur = glowBlur;
   ctx.fill();
   ctx.shadowBlur = 0;
 }
 
 function tick() {
+  rafId = requestAnimationFrame(tick);
+
+  if (document.hidden) return;
+
   ctx.globalCompositeOperation = "source-over";
   ctx.fillStyle = "rgba(10, 12, 25, 0.22)";
   ctx.fillRect(0, 0, width, height);
@@ -131,7 +149,7 @@ function tick() {
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
     ctx.fillStyle = p.color;
     ctx.shadowColor = p.color;
-    ctx.shadowBlur = 16;
+    ctx.shadowBlur = glowBlur;
     ctx.fill();
     ctx.shadowBlur = 0;
     ctx.globalAlpha = 1;
@@ -139,15 +157,15 @@ function tick() {
     if (p.age >= p.life) particles.splice(i, 1);
   }
 
-  if (animationStarted && Math.random() < 0.035) {
+  if (animationStarted && Math.random() < launchChance) {
     launchRocket();
   }
-
-  requestAnimationFrame(tick);
 }
 
 function burstShow() {
-  for (let i = 0; i < 9; i += 1) {
+  startFireworks();
+  const bursts = isSmallScreen ? 5 : 7;
+  for (let i = 0; i < bursts; i += 1) {
     setTimeout(() => launchRocket(random(width * 0.12, width * 0.88), random(height * 0.12, height * 0.48)), i * 180);
   }
 }
@@ -181,12 +199,27 @@ function openBirthdayCard() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-window.addEventListener("resize", resizeCanvas);
+function startFireworks() {
+  if (!rafId && !reduceMotion) {
+    rafId = requestAnimationFrame(tick);
+  }
+}
+
+window.addEventListener("resize", () => {
+  window.clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(resizeCanvas, 120);
+});
 openCard.addEventListener("click", openBirthdayCard);
 replay.addEventListener("click", burstShow);
 
 resizeCanvas();
-tick();
-setTimeout(() => {
-  launchRocket(width * 0.72, height * 0.34);
-}, 650);
+const warmUp = () => {
+  startFireworks();
+  setTimeout(() => launchRocket(width * 0.72, height * 0.34), 450);
+};
+
+if ("requestIdleCallback" in window) {
+  window.requestIdleCallback(warmUp, { timeout: 1400 });
+} else {
+  window.setTimeout(warmUp, 900);
+}
